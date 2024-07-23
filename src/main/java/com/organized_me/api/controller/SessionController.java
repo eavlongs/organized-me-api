@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/sessions")
+@RequestMapping("/api/sessions")
 public class SessionController {
     @Autowired
     private SessionService sessionService;
@@ -29,7 +29,7 @@ public class SessionController {
             return ResponseHelper.buildNotFoundResponse();
         }
 
-        User user = userService.getUserById(session.getId());
+        User user = userService.getUserById(session.getUserId());
         if (user == null) {
             return ResponseHelper.buildNotFoundResponse();
         }

@@ -5,6 +5,7 @@ import com.organized_me.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -13,6 +14,8 @@ public class UserService {
     private UserRepository userRepository;
 
     public User createUser(User user) {
+        user.setCreatedAt(new Date());
+        user.setUpdatedAt(new Date());
         return userRepository.save(user);
     }
 
@@ -30,5 +33,9 @@ public class UserService {
 
     public void deleteUserById(String id) {
         userRepository.deleteById(id);
+    }
+
+    public User getUserByProviderIdAndType(String providerId, String providerType) {
+        return userRepository.getUserByProviderIdAndType(providerId, providerType);
     }
 }

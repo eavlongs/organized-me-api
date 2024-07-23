@@ -5,6 +5,7 @@ import com.organized_me.api.repository.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -13,7 +14,24 @@ public class SessionService {
     private SessionRepository sessionRepository;
 
     public Session getSession(String sessionId) {
-        return sessionRepository.findById(sessionId).orElse(null);
+        if (sessionId == null) {
+            return null;
+        }
+
+        Session session = sessionRepository.findById(sessionId).orElse(null);
+
+        if (session == null) {
+            return null;
+        }
+
+        Date now = new Date();
+
+        if (now.after(session.getExpiresAt())) {
+            sessionRepository.deleteById(sessionId);
+            return null;
+        }
+
+        return session;
     }
 
     public Session saveSession(Session session) {

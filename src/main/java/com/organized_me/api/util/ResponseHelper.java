@@ -26,6 +26,7 @@ public class ResponseHelper {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("message", message);
         responseBody.put("data", data);
+        responseBody.put("success", true);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
@@ -42,6 +43,7 @@ public class ResponseHelper {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("message", message);
         responseBody.put("error", error);
+        responseBody.put("success", false);
 
         return ResponseEntity.status(status).body(responseBody);
     }
