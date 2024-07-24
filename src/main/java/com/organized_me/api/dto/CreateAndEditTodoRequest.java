@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 
-public class CreateTodo {
+public class CreateAndEditTodoRequest {
     @NotNull(message = "title cannot be empty")
     @Size(min = 1, max = 100)
     private String title;

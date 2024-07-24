@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidTime {
-    String message() default "The time must be at least today's date at 00:00 and at most one year from today";
+    String message() default "The time must be at least 1970-01-01";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

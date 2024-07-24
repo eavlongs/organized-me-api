@@ -20,6 +20,9 @@ public class TimeConstraintValidator implements ConstraintValidator<ValidTime, D
         Calendar nextYear = (Calendar) today.clone();
         nextYear.add(Calendar.YEAR, 1);
 
-        return !value.before(today.getTime()) && !value.after(nextYear.getTime());
+        Calendar minYear = Calendar.getInstance();
+        minYear.set(1970, Calendar.JANUARY, 1, 0, 0, 0);
+
+        return !value.before(minYear.getTime()) && !value.after(nextYear.getTime());
     }
 }

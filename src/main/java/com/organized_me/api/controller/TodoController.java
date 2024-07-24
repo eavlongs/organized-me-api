@@ -1,6 +1,6 @@
 package com.organized_me.api.controller;
 
-import com.organized_me.api.dto.CreateTodo;
+import com.organized_me.api.dto.CreateAndEditTodoRequest;
 import com.organized_me.api.model.Session;
 import com.organized_me.api.model.Todo;
 import com.organized_me.api.service.SessionService;
@@ -58,7 +58,7 @@ public class TodoController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> createTodo(@Valid @RequestBody CreateTodo body, @CookieValue(name="auth_session", required = false) String sessionId) {
+    public ResponseEntity<Map<String, Object>> createTodo(@Valid @RequestBody CreateAndEditTodoRequest body, @CookieValue(name="auth_session", required = false) String sessionId) {
         System.out.println(sessionId);
         Session session = sessionService.getSession(sessionId);
 
@@ -73,6 +73,42 @@ public class TodoController {
         todo.setTime(body.getTime());
 
         todoService.addTodo(todo);
+
+        return ResponseHelper.buildSuccessResponse();
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> editTodo(@Valid @RequestBody CreateAndEditTodoRequest body, @CookieValue(name="auth_session", required = false) String sessionId, @PathVariable String id) {
+        Session session = sessionService.getSession(sessionId);
+
+        if (session == null) {
+            return ResponseHelper.buildUnauthorizedResponse();
+        }
+
+        Todo todo = todoService.getTodoById(id);
+
+        if (todo == null) {
+            return ResponseHelper.buildNotFoundResponse();
+        }
+
+        todo.setTitle(body.getTitle());
+        todo.setDescription(body.getDescription());
+        todo.setTime(body.getTime());
+
+        todoService.updateTodo(todo);
+
+        return ResponseHelper.buildSuccessResponse();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteTodo(@CookieValue(name="auth_session", required = false) String sessionId, @PathVariable String id) {
+        Session session = sessionService.getSession(sessionId);
+
+        if (session == null) {
+            return ResponseHelper.buildUnauthorizedResponse();
+        }
+
+        todoService.deleteTodoById(id);
 
         return ResponseHelper.buildSuccessResponse();
     }
