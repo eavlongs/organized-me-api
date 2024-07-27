@@ -6,15 +6,17 @@ import com.organized_me.api.model.Todo;
 import com.organized_me.api.service.SessionService;
 import com.organized_me.api.service.TodoService;
 import com.organized_me.api.service.UserService;
+import com.organized_me.api.util.Helper;
 import com.organized_me.api.util.ResponseHelper;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,32 +30,44 @@ public class TodoController {
     private SessionService sessionService;
 
     @GetMapping("/active")
-    public ResponseEntity<Map<String, Object>> getActiveTodos(@CookieValue(name="auth_session", required = false) String sessionId) {
+    public ResponseEntity<Map<String, Object>> getActiveTodos(
+            @CookieValue(name="auth_session", required = false) String sessionId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "sort", defaultValue = "desc") String sort) {
+
         Session session = sessionService.getSession(sessionId);
 
         if (session == null) {
             return ResponseHelper.buildUnauthorizedResponse();
         }
 
-        List<Todo> todos = todoService.getActiveTodos(session.getUserId());
+        Pageable pageable = Helper.setUpPageable(page, limit, "time", sort);
+        Page<Todo> todos = todoService.getActiveTodos(session.getUserId(), pageable);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("todos", todos);
+        Helper.setResponsePaginatedData(data, todos, "todos");
         return ResponseHelper.buildSuccessResponse(data);
     }
 
     @GetMapping("/finished")
-    public ResponseEntity<Map<String, Object>> getFinishedTodos(@CookieValue(name="auth_session", required = false) String sessionId) {
+    public ResponseEntity<Map<String, Object>> getFinishedTodos(
+            @CookieValue(name="auth_session", required = false) String sessionId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "limit", defaultValue = "10") int limit,
+            @RequestParam(value = "sort", defaultValue = "desc") String sort
+    ) {
         Session session = sessionService.getSession(sessionId);
 
         if (session == null) {
             return ResponseHelper.buildUnauthorizedResponse();
         }
 
-        List<Todo> todos = todoService.getFinishedTodos(session.getUserId());
+        Pageable pageable = Helper.setUpPageable(page, limit, "time", sort);
+        Page<Todo> todos = todoService.getFinishedTodos(session.getUserId(), pageable);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("todos", todos);
+        Helper.setResponsePaginatedData(data, todos, "todos");
         return ResponseHelper.buildSuccessResponse(data);
     }
 

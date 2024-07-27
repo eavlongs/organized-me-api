@@ -3,10 +3,11 @@ package com.organized_me.api.service;
 import com.organized_me.api.model.Todo;
 import com.organized_me.api.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class TodoService {
@@ -25,12 +26,12 @@ public class TodoService {
         return todoRepository.save(todo);
     }
 
-    public List<Todo> getActiveTodos(String userId) {
-        return todoRepository.findActiveTodosByUserId(userId);
+    public Page<Todo> getActiveTodos(String userId, Pageable pageable) {
+        return todoRepository.findActiveTodosByUserId(userId, pageable);
     }
 
-    public List<Todo> getFinishedTodos(String userId) {
-        return todoRepository.findFinishedTodosByUserId(userId);
+    public Page<Todo> getFinishedTodos(String userId, Pageable pageable) {
+        return todoRepository.findFinishedTodosByUserId(userId, pageable);
     }
 
     public Todo getTodoById(String id) {
