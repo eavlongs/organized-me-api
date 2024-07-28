@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class Helper {
     public static <T> void setResponsePaginatedData(Map<String, Object> data, Page<T> pageObject, String dataKey) {
@@ -22,5 +23,12 @@ public class Helper {
             return PageRequest.of(page - 1, limit, Sort.by(sortKey).descending());
         }
         return PageRequest.of(page - 1, limit);
+    }
+    
+    public static String getExtensionByStringHandling(String filename) {
+        return Optional.ofNullable(filename)
+                .filter(f -> f.contains("."))
+                .map(f -> f.substring(filename.lastIndexOf(".") + 1))
+                .orElse("");
     }
 }
