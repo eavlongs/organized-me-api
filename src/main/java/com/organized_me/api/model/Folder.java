@@ -1,6 +1,7 @@
 package com.organized_me.api.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -13,6 +14,8 @@ public class Folder {
 	private String name;
 	private String parentId;
 	private FolderParent[] parents;
+	@Transient
+	private File[] files;
 	private Date createdAt;
 	private Date updatedAt;
 	
@@ -46,6 +49,14 @@ public class Folder {
 	
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
+	}
+	
+	public File[] getFiles() {
+		return files;
+	}
+	
+	public void setFiles(File[] files) {
+		this.files = files;
 	}
 	
 	public Date getCreatedAt() {

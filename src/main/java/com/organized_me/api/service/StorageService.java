@@ -8,10 +8,14 @@ import com.organized_me.api.repository.FolderRepository;
 import com.organized_me.api.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -96,8 +100,10 @@ public class StorageService {
 					throw new Exception("File is empty");
 				}
 				
+				// TODO limit file size
+				
 				UUID uuid = UUID.randomUUID();
-				String fileToBeUploadedName = uuid.toString() + "." + Helper.getExtensionByStringHandling(file.getOriginalFilename());
+				String fileToBeUploadedName = uuid.toString() + "." + Helper.getExtensionByStringHandling(StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename())));
 				
 				Path path = Path.of(dir, fileToBeUploadedName);
 				
@@ -153,5 +159,32 @@ public class StorageService {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public List<Folder> getFoldersByIds(String[] ids, String userId) {
+		return folderRepository.getFoldersByIds(ids, userId);
+	}
+	
+	public List<Folder> getFolderChildrenFolders(String[] ids, String userId) {
+		return folderRepository.getFolderChildrenFolders(ids, userId);
+	}
+	
+	public List<Folder> getUserRootFolders(String userId) {
+		return folderRepository.getUserRootFolders(userId);
+	}
+	
+	public List<File> getFilesByFolderIds(String[] ids, String userId) {
+		return fileRepository.getFilesByFolderIds(ids, userId);
+	}
+	
+	public Resource downloadFile(File file) throws MalformedURLException {
+		Path path = Path.of(file.getFilePath());
+		
+		System.out.println(path);
+		if (Files.exists(path)) {
+			return new UrlResource(path.toUri());
+		}
+		
+		return null;
 	}
 }

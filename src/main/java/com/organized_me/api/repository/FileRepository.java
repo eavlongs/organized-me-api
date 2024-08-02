@@ -8,5 +8,8 @@ import java.util.List;
 
 public interface FileRepository extends MongoRepository<File, String> {
 	@Query("{ 'userId' : ?0, 'folderId' : ?1 }")
-	public List<File> getFilesByUserIdAndParentId(String userId, String folderId);
+	List<File> getFilesByUserIdAndParentId(String userId, String folderId);
+	
+	@Query("{ 'userId' : ?1, 'folderId' : { $in : ?0 } }")
+	List<File> getFilesByFolderIds(String[] ids, String userId);
 }
