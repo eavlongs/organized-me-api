@@ -63,7 +63,7 @@ public class StorageService {
 			parents = folder.getParents();
 		}
 		
-		List<Folder> folders = new ArrayList<>();
+		List<Folder> folders;
 		
 		if (id.equals("root")) {
 			folders = folderRepository.getFoldersByUserIdAndParentId(userId, null, sort);
@@ -104,7 +104,7 @@ public class StorageService {
 				// TODO limit file size
 				
 				UUID uuid = UUID.randomUUID();
-				String fileToBeUploadedName = uuid.toString() + "." + Helper.getExtensionByStringHandling(StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename())));
+				String fileToBeUploadedName = uuid + "." + Helper.getExtensionByStringHandling(StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename())));
 				
 				Path path = Path.of(dir, fileToBeUploadedName);
 				
