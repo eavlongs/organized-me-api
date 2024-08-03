@@ -1,6 +1,7 @@
 package com.organized_me.api.repository;
 
 import com.organized_me.api.model.Folder;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 public interface FolderRepository extends MongoRepository<Folder, String> {
 	@Query("{ 'userId' : ?0, 'parentId' : ?1 }")
-	List<Folder> getFoldersByUserIdAndParentId(String userId, String parentId);
+	List<Folder> getFoldersByUserIdAndParentId(String userId, String parentId, Sort sort);
 	
 	@Query("{'userId':  ?0, 'parentId':  null}")
 	List<Folder> getUserRootFolders(String userId);

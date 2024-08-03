@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +50,7 @@ public class StorageService {
 		folderRepository.deleteById(id);
 	}
 	
-	public Map<String, Object> getFolderDetailById(String userId, String id) {
+	public Map<String, Object> getFolderDetailById(String userId, String id, Sort sort) {
 		Folder folder = null;
 		
 		FolderParent[] parents = new FolderParent[]{};
@@ -65,17 +66,17 @@ public class StorageService {
 		List<Folder> folders = new ArrayList<>();
 		
 		if (id.equals("root")) {
-			folders = folderRepository.getFoldersByUserIdAndParentId(userId, null);
+			folders = folderRepository.getFoldersByUserIdAndParentId(userId, null, sort);
 		} else {
-			folders = folderRepository.getFoldersByUserIdAndParentId(userId, id);
+			folders = folderRepository.getFoldersByUserIdAndParentId(userId, id, sort);
 		}
 		
 		List<File> files;
 		
 		if (id.equals("root")) {
-			files = fileRepository.getFilesByUserIdAndParentId(userId, null);
+			files = fileRepository.getFilesByUserIdAndParentId(userId, null, sort);
 		} else {
-			files = fileRepository.getFilesByUserIdAndParentId(userId, id);
+			files = fileRepository.getFilesByUserIdAndParentId(userId, id, sort);
 		}
 		
 		Map<String, Object> data =  new HashMap<>();

@@ -9,6 +9,7 @@ import com.organized_me.api.service.StorageService;
 import com.organized_me.api.util.ResponseHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,27 @@ public class StorageController {
 	private SessionService sessionService;
 	
 	@GetMapping("/folder/{id}")
-	public ResponseEntity<Map<String, Object>> getFolderDetail(@CookieValue(value = "auth_session", required = false) String sessionId, @PathVariable String id) {
+	public ResponseEntity<Map<String, Object>> getFolderDetail(
+			@CookieValue(value = "auth_session", required = false) String sessionId,
+			@PathVariable String id,
+			@RequestParam(value = "sort", defaultValue = "asc", required = false) String sortDirection,
+			@RequestParam(value = "sortKey", defaultValue = "name", required = false) String sortKey) {
+		
 		Session session = sessionService.getSession(sessionId);
 		
 		if (session == null) {
 			return ResponseHelper.buildUnauthorizedResponse();
 		}
 		
-		Map<String, Object> data = storageService.getFolderDetailById(session.getUserId(), id);
+		Sort sort = Sort.by(sortKey);
+		
+		if (sortDirection.equals("desc")) {
+			sort = sort.descending();
+		} else if (sortDirection.equals("asc")) {
+			sort = sort.ascending();
+		}
+		
+		Map<String, Object> data = storageService.getFolderDetailById(session.getUserId(), id, sort);
 		
 		if (data == null) {
 			return ResponseHelper.buildNotFoundResponse();
@@ -345,11 +359,28 @@ public class StorageController {
 			return ResponseHelper.buildNotFoundResponse();
 		}
 		
+		// make sure that the id and folderId is not the same and the destination is not a children of the folder
+		
 		if (folder.getId().equals(destinationFolder.getId())) {
 			return ResponseHelper.buildBadRequestResponse();
 		}
 		
-		List<FolderParent> parents = new ArrayList<>(List.of(destinationFolder.getParents()));
+		FolderParent[] destinationFolderParents = destinationFolder.getParents();
+		
+		if (destinationFolderParents == null) {
+			destinationFolderParents = new FolderParent[]{};
+		}
+		
+		List<FolderParent> parents = new ArrayList<>(List.of(destinationFolderParents));
+		
+		for (FolderParent parent: parents) {
+			if (parent.getId().equals(folder.getId())) {
+				Map<String, Object> err = new HashMap<>();
+				err.put("message", "Destination folder is a children of the folder");
+				return ResponseHelper.buildBadRequestResponse(err);
+			}
+		}
+		
 		FolderParent folderParent = new FolderParent();
 		
 		folderParent.setId(destinationFolder.getId());
