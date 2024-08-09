@@ -5,21 +5,15 @@ import com.organized_me.api.model.Folder;
 import com.organized_me.api.model.FolderParent;
 import com.organized_me.api.repository.FileRepository;
 import com.organized_me.api.repository.FolderRepository;
-import com.organized_me.api.util.Helper;
+import com.organized_me.api.util.FileHandlingHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @Service
@@ -89,45 +83,26 @@ public class StorageService {
 	}
 	
 	public List<File> uploadFiles(String folderId, String userId, MultipartFile[] files) {
-		String dir = Objects.requireNonNull(env.getProperty("file.upload.dir"), "File Upload Directory must not be null");
-		String dirAlias = Objects.requireNonNull(env.getProperty("file.upload.dir.alias"), "File Upload Directory Alias not be null");
 		List<File> fileList = new ArrayList<>();
 		
 		for (MultipartFile file : files) {
-			// save file to dir
-			
 			try {
-				if (file.isEmpty()) {
-					throw new Exception("File is empty");
+				String filePath = FileHandlingHelper.uploadFile(file);
+				File fileModel = new File();
+				fileModel.setUserId(userId);
+				
+				if (folderId.equals("root")) {
+					fileModel.setFolderId(null);
+				} else {
+					fileModel.setFolderId(folderId);
 				}
 				
-				// TODO limit file size
+				fileModel.setName(file.getOriginalFilename());
+				fileModel.setFilePath(filePath);
+				fileModel.setCreatedAt(new Date());
+				fileModel.setUpdatedAt(new Date());
 				
-				UUID uuid = UUID.randomUUID();
-				String fileToBeUploadedName = uuid + "." + Helper.getExtensionByStringHandling(StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename())));
-				
-				Path path = Path.of(dir, fileToBeUploadedName);
-				
-				try (InputStream inputStream = file.getInputStream()) {
-					Files.copy(inputStream, path,
-							StandardCopyOption.REPLACE_EXISTING);
-					
-					File fileModel = new File();
-					fileModel.setUserId(userId);
-					
-					if (folderId.equals("root")) {
-						fileModel.setFolderId(null);
-					} else {
-						fileModel.setFolderId(folderId);
-					}
-					
-					fileModel.setName(file.getOriginalFilename());
-					fileModel.setFilePath(Path.of(dirAlias, fileToBeUploadedName).toString());
-					fileModel.setCreatedAt(new Date());
-					fileModel.setUpdatedAt(new Date());
-					
-					fileList.add(fileModel);
-				}
+				fileList.add(fileModel);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -145,20 +120,18 @@ public class StorageService {
 		return fileRepository.save(file);
 	}
 	
-	public void deleteFile(String id) {
+	public void deleteFile(String id) throws Exception {
 		File file = fileRepository.findById(id).orElse(null);
 		
 		if (file == null) {
 			return;
 		}
 		
-		Path path = Path.of(file.getFilePath());
-		
 		try {
-			Files.delete(path);
+			FileHandlingHelper.deleteFile(file.getFilePath());
 			fileRepository.deleteById(id);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new Exception(e);
 		}
 	}
 	
@@ -179,13 +152,6 @@ public class StorageService {
 	}
 	
 	public Resource downloadFile(File file) throws MalformedURLException {
-		Path path = Path.of(file.getFilePath());
-		
-		System.out.println(path);
-		if (Files.exists(path)) {
-			return new UrlResource(path.toUri());
-		}
-		
-		return null;
+		return FileHandlingHelper.downloadFile(file);
 	}
 }

@@ -227,7 +227,7 @@ public class StorageController {
 	@DeleteMapping("/file/{id}")
 	public ResponseEntity<Map<String, Object>> deleteFile(
 			@CookieValue(value = "auth_session", required = false) String sessionId,
-			@PathVariable String id) {
+			@PathVariable String id) throws Exception {
 		Session session = sessionService.getSession(sessionId);
 		
 		if (session == null) {
@@ -240,7 +240,13 @@ public class StorageController {
 			return ResponseHelper.buildNotFoundResponse();
 		}
 		
-		storageService.deleteFile(file.getId());
+		try {
+			storageService.deleteFile(file.getId());
+		} catch (Exception e) {
+			Map<String, Object> error = new HashMap<>();
+			error.put("file_delete", e.toString());
+			return ResponseHelper.buildBadRequestResponse(error);
+		}
 		
 		return ResponseHelper.buildSuccessResponse();
 	}
@@ -424,6 +430,7 @@ public class StorageController {
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
 					.body(resource);
 		} catch (Exception e) {
+			System.out.println(e);
 			return ResponseHelper.buildBadRequestResponse();
 		}
 	}
