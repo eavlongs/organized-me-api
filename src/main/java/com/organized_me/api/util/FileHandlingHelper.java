@@ -62,7 +62,7 @@ public class FileHandlingHelper {
 		}
 	}
 	
-	public static void deleteFile(String relativePath) {
+	public static void deleteFile(String relativePath) throws RuntimeException {
 		// this is safe because we only store the files in one folder
 		Path path = Path.of(frontEndProjectDir, relativePath);
 		try {

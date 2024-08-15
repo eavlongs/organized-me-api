@@ -16,6 +16,7 @@ public class Tracker {
 	private double[] definiteRange;
 	private boolean integerOnly;
 	private boolean sumValueOnSameDay;
+	private boolean isLargerBetter;
 	private Date createdAt;
 	private Date updatedAt;
 	
@@ -105,6 +106,14 @@ public class Tracker {
 	
 	public void setSumValueOnSameDay(boolean sumValueOnSameDay) {
 		this.sumValueOnSameDay = sumValueOnSameDay;
+	}
+	
+	public boolean isLargerBetter() {
+		return isLargerBetter;
+	}
+	
+	public void setLargerBetter(boolean largerBetter) {
+		isLargerBetter = largerBetter;
 	}
 	
 	public Date getCreatedAt() {

@@ -7,9 +7,8 @@ import java.util.Date;
 public class TrackerData {
 	@Id
 	private String id;
-	private String privateId;
-	private String value;
-	private Date date;
+	private String trackerId;
+	private double value;
 	private Date createdAt;
 	private Date updatedAt;
 	
@@ -21,28 +20,20 @@ public class TrackerData {
 		this.id = id;
 	}
 	
-	public String getPrivateId() {
-		return privateId;
+	public String getTrackerId() {
+		return trackerId;
 	}
 	
-	public void setPrivateId(String privateId) {
-		this.privateId = privateId;
+	public void setTrackerId(String trackerId) {
+		this.trackerId = trackerId;
 	}
 	
-	public String getValue() {
+	public double getValue() {
 		return value;
 	}
 	
-	public void setValue(String value) {
+	public void setValue(double value) {
 		this.value = value;
-	}
-	
-	public Date getDate() {
-		return date;
-	}
-	
-	public void setDate(Date date) {
-		this.date = date;
 	}
 	
 	public Date getCreatedAt() {

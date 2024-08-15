@@ -20,12 +20,16 @@ public class CreateAndEditTrackerRequest {
 	@Size(min = 1, max = 30)
 	private String unit;
 	
+	@NotNull(message = "startRange is required")
 	private double startRange;
+	@NotNull(message = "endRange is required")
 	private double endRange;
 	@NotNull(message = "\"Integer Only\" is required")
 	private boolean integerOnly;
 	@NotNull(message = "\"Sum Value If On The Same Day?\" is required")
 	private boolean sumValueOnTheSameDay;
+	@NotNull(message = "Is Larger Better is required")
+	private boolean largerBetter;
 	private MultipartFile image;
 	@NotNull(message = "validateImage is required")
 	private boolean validateImage;
@@ -94,6 +98,15 @@ public class CreateAndEditTrackerRequest {
 	
 	public void setSumValueOnTheSameDay(@NotNull(message = "\"Sum Value If On The Same Day?\" is required") boolean sumValueOnTheSameDay) {
 		this.sumValueOnTheSameDay = sumValueOnTheSameDay;
+	}
+	
+	@NotNull(message = "Is Larger Better is required")
+	public boolean isLargerBetter() {
+		return largerBetter;
+	}
+	
+	public void setLargerBetter(@NotNull(message = "Is Larger Better is required") boolean largerBetter) {
+		this.largerBetter = largerBetter;
 	}
 	
 	public MultipartFile getImage() {
