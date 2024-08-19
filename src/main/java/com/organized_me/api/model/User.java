@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @Document(collection = "users")
 public class User {
@@ -12,18 +13,10 @@ public class User {
     private String firstName;
     private String lastName;
     private String avatarUrl;
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
-
     private String email;
     private String providerType;
     private String providerId;
+    private List<Integer> featureVisibility;
 
     private Date createdAt;
     private Date updatedAt;
@@ -90,5 +83,21 @@ public class User {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+    
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+    
+    public List<Integer> getFeatureVisibility() {
+        return featureVisibility;
+    }
+    
+    public void setFeatureVisibility(List<Integer> featureVisibility) {
+        this.featureVisibility = featureVisibility;
     }
 }

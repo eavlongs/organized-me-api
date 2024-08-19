@@ -189,7 +189,6 @@ public class TrackerController {
 		List<TrackerData> trackerData = trackerService.getTrackerData(tracker, range);
 		
 		double average = trackerService.calculateAverage(trackerData);
-		double difference = trackerService.calculateDifference(trackerData);
 		double bestValue = trackerService.getBestValue(trackerData, tracker.isLargerBetter());
 		double worstValue = trackerService.getWorstValue(trackerData, tracker.isLargerBetter());
 		double valueRange = Math.abs(bestValue - worstValue);

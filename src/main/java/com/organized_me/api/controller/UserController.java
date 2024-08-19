@@ -67,4 +67,71 @@ public class UserController {
         responseBody.put("user", user);
         return ResponseHelper.buildSuccessResponse(responseBody);
     }
+    
+    @PatchMapping("/feature-visibility")
+    public ResponseEntity<Map<String, Object>> updateFeatureVisibility(
+            @CookieValue(value="auth_session", required=false) String sessionId,
+            @RequestBody List<Integer> body) {
+        Session session = sessionService.getSession(sessionId);
+        
+        if (session == null) {
+            return ResponseHelper.buildUnauthorizedResponse();
+        }
+        
+        User user = userService.getUser(session.getUserId());
+        
+        if (user == null) {
+            return ResponseHelper.buildUnauthorizedResponse();
+        }
+        
+        if (body == null) {
+            return ResponseHelper.buildBadRequestResponse();
+        }
+        
+        userService.setFeatureVisibility(user, body);
+        
+        return ResponseHelper.buildSuccessResponse();
+    }
+    
+    @GetMapping("/feature-visibility")
+    public ResponseEntity<Map<String, Object>> getUserFeatureVisibility(
+            @CookieValue(value="auth_session", required=false) String sessionId) {
+        Session session = sessionService.getSession(sessionId);
+        
+        if (session == null) {
+            return ResponseHelper.buildUnauthorizedResponse();
+        }
+        
+        User user = userService.getUser(session.getUserId());
+        
+        if (user == null) {
+            return ResponseHelper.buildUnauthorizedResponse();
+        }
+        
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("featureVisibility", user.getFeatureVisibility());
+        
+        return ResponseHelper.buildSuccessResponse(responseBody);
+    }
+    
+    @GetMapping("/profile")
+    public ResponseEntity<Map<String, Object>> getUserProfile(
+            @CookieValue(value="auth_session", required=false) String sessionId) {
+        Session session = sessionService.getSession(sessionId);
+        
+        if (session == null) {
+            return ResponseHelper.buildUnauthorizedResponse();
+        }
+        
+        User user = userService.getUser(session.getUserId());
+        
+        if (user == null) {
+            return ResponseHelper.buildUnauthorizedResponse();
+        }
+        
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("user", user);
+        
+        return ResponseHelper.buildSuccessResponse(responseBody);
+    }
 }
