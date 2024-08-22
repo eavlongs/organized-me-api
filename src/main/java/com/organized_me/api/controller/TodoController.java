@@ -73,7 +73,6 @@ public class TodoController {
 
     @PostMapping("/create")
     public ResponseEntity<Map<String, Object>> createTodo(@Valid @RequestBody CreateAndEditTodoRequest body, @CookieValue(name="auth_session", required = false) String sessionId) {
-        System.out.println(sessionId);
         Session session = sessionService.getSession(sessionId);
 
         if (session == null) {

@@ -17,7 +17,8 @@ public class UserService {
     enum FeatureVisibility {
         TODO,
         STORAGE,
-        TRACKER;
+        TRACKER,
+        NOTES;
         
         public static List<Integer> getValues() {
             List<Integer> values = new ArrayList<>();
