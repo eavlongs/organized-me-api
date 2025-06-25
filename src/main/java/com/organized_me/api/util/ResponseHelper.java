@@ -8,20 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResponseHelper {
-//    private String message = "";
-//    private Map<String, Object> data;
-//    private HttpStatus status = HttpStatus.OK;
-//
-//    public ResponseHelper(String message, Map<String, Object> data, HttpStatus status) {
-//        this.message = message;
-//        this.data = data;
-//        this.status = status;
-//    }
-//
-//    public ResponseHelper(Map<String, Object> data) {
-//        this.data = data;
-//    }
-
     public static ResponseEntity<Map<String, Object>> buildSuccessResponse(Map<String, Object> data, String message) {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("message", message);
